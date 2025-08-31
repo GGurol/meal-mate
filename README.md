@@ -42,7 +42,7 @@ Once the container is running, open a **new terminal** and run the following com
 #### a. Create Migration Files
 This command checks your `models.py` for changes and creates the necessary migration files.
 ```bash
-docker compose exec meal_mate_app python manage.py makemigrations
+docker compose exec app python manage.py makemigrations
 ```
 
 #### b. Apply Migrations
