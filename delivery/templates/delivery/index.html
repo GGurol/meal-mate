@@ -5,9 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link rel="stylesheet" href="{% static 'delivery/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'delivery/css/buttons.css' %}">
+
     <title>Welcome page</title>
 </head>
 <body>
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post" style="position: fixed; min-width: 750px; text-align: right; top: 10px; right: 10px; z-index: 1000;">
+        {% csrf_token %}
+        Welcome {{ request.user.username }}
+        <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
+        <a href="{% url 'show_cart_page' %}" class="btn btn-info">Cart({{ cart_item_count }})</a>
+        <a href="{% url 'order_history' %}" class="btn btn-warning">My Orders</a>
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+    {% endif %}  
     <h2>Welcome to Meal-Mate</h2>
     <a href="signin/">SIGN IN</a>
     <a href="signup/">SIGN UP</a>

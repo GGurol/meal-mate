@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'delivery/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'delivery/css/buttons.css' %}">
+
+    <title>My Favorite Restaurants</title>
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post" style="position: fixed; min-width: 750px; text-align: right; top: 10px; right: 10px; z-index: 1000;">
+        {% csrf_token %}
+        Welcome {{ request.user.username }}
+        <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
+        <a href="{% url 'show_cart_page' %}" class="btn btn-info">Cart({{ cart_item_count }})</a>
+        <a href="{% url 'order_history' %}" class="btn btn-warning">My Orders</a>
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+    {% endif %}  
+    <h1>My Past Orders</h1>
+        {% if orders %}
+    <table border="1">
+        <thead>
+            <tr>
+                    <th style="padding: 10px;">Order ID</th>
+                    <th style="padding: 10px;">Date</th>
+                    <th style="padding: 10px;">Items</th>
+                    <th style="padding: 10px;">Total Price</th>
+                    <th style="padding: 10px;">Status</th>
+            </tr>
+        </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td style="padding: 10px;">#{{ order.id }}</td>
+                        <td style="padding: 10px;">{{ order.created_at|date:"d M, Y" }}</td>
+                        <td style="padding: 10px;">
+                            <ul>
+                                {% for item in order.items.all %}
+                                    <li>{{ item.quantity }} x {{ item.menu_item.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td style="padding: 10px;">$ {{ order.total_price }}</td>
+                        <td style="padding: 10px;">{{ order.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+    </table>
+    {% else %}
+        <p>You have no past orders.</p>
+    {% endif %}
+</body>
+</html>

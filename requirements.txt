@@ -1,0 +1,14 @@
+# requirements.txt
+
+# Web Framework
+Django~=5.1
+
+# Payment gateway integration
+razorpay
+
+# Production WSGI server (good practice)
+gunicorn
+
+# Required by the 'razorpay' package
+setuptools
+Pillow

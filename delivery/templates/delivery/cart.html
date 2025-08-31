@@ -5,45 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link rel="stylesheet" href="{% static 'delivery/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'delivery/css/buttons.css' %}">
     <title>Your Cart</title>
 </head>
 <body>
-    <h1>Welcome {{ username }}</h1>
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post" style="position: fixed; min-width: 750px; text-align: right; top: 10px; right: 10px; z-index: 1000;">
+        {% csrf_token %}
+        Welcome {{ request.user.username }}
+        <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
+        <a href="{% url 'show_cart_page' %}" class="btn btn-info">Cart({{ cart_item_count }})</a>
+        <a href="{% url 'order_history' %}" class="btn btn-warning">My Orders</a>
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+    {% endif %}  
     <h2>Your Cart</h2>
 
-    {% if items %}
+{% if items %}
     <table border="1">
         <thead>
             <tr>
                 <th>Image</th>
                 <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
             </tr>
         </thead>
         <tbody>
-            {% for item in items %}
-            <tr>
+            {% for item in items %} <tr>
                 <td>
-                    <img src="{{ item.picture }}" alt="{{ item.name }}" width="100">
+                    {% if item.menu_item.picture %}
+                        <img src="{{ item.menu_item.picture.url }}" alt="{{ item.menu_item.name }}" width="100">
+                    {% endif %}
                 </td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.description }}</td>
-                <td>₹{{ item.price }}</td>
+                <td>{{ item.menu_item.name }} ( {{ item.menu_item.description }})</td>
+                
+                <td>{{ item.quantity }}</td>
+
+                <td>${{ item.menu_item.price }}</td>
+
+                <td>{{ item.get_total }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <h3>Total Price: ₹{{ total_price }}</h3>
+    <h3>Grand Total: ${{ total_price }}</h3>
 
-    <form method="GET" action="{% url 'checkout' username %}">
+    <form method="POST" action="{% url 'checkout' %}">
+        {% csrf_token %}
         <button type="submit">Proceed to Checkout</button>
     </form>
 
-    <a href="{% url 'customer_menu' items.0.restaurant.id username %}">Back to Menu</a>
+    {% if last_restaurant_id %}
+        <a href="{% url 'customer_menu' last_restaurant_id %}">Back to Menu</a>
+    {% endif %}
+
     {% else %}
     <p>Your cart is empty!</p>
-    <a href="/">Back to Home</a>
     {% endif %}
 </body>
 </html>

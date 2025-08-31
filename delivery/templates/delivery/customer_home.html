@@ -5,10 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link rel="stylesheet" href="{% static 'delivery/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'delivery/css/buttons.css' %}">
+
     <title>My Favorite Restaurants</title>
 </head>
 <body>
-    Welcome {{username}}
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post" style="position: fixed; min-width: 750px; text-align: right; top: 10px; right: 10px; z-index: 1000;">
+        {% csrf_token %}
+        Welcome {{ request.user.username }}
+        <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
+        <a href="{% url 'show_cart_page' %}" class="btn btn-info">Cart({{ cart_item_count }})</a>
+        <a href="{% url 'order_history' %}" class="btn btn-warning">My Orders</a>
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+    {% endif %}  
     <h1>My Favorite Restaurants</h1>
     <table border="1">
         <thead>
@@ -24,19 +35,19 @@
             {% for restaurant in restaurants %}
             <tr>
                 <td>
-                    <img src="{{ restaurant.picture }}" alt="Picture of {{ restaurant.name }}" width="100">
+                    <img src="{{ restaurant.picture.url }}" alt="Picture of {{ restaurant.name }}" width="100">
                 </td>
                 <td>{{ restaurant.name }}</td>
                 <td>{{ restaurant.cuisine }}</td>
                 <td>{{ restaurant.rating }}/5</td>
                 <td>
-                    <a href="{% url 'customer_menu' restaurant.id username %}">View Menu</a>
-                    <hr>
-                   
+                    <a href="{% url 'customer_menu' restaurant.id %}">View Menu</a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+            {% include 'delivery/base.html' %}
+
 </body>
 </html>
